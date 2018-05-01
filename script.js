@@ -378,7 +378,7 @@ require([
 
     // Listen for number input
     query("#numinput").on("change", function(e) {
-        if (e.target.value < parcelData.length && e.target.value >= 1) {
+        if (e.target.value <= parcelData.length && e.target.value >= 1) {
 
             indexParcels(e.target.value);
             var parcelVal = $('#numinput').val();
