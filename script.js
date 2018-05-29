@@ -95,7 +95,7 @@ require([
             title: "State Agencies",
             visible: true,
             minScale: 150000,
-            popupTemplate: parcelsTemplate
+            //popupTemplate: parcelsTemplate
         }]
     });
 
@@ -126,6 +126,68 @@ require([
     // Popup and panel sync
     mapView.when(function(){
         CalciteMapArcGISSupport.setPopupPanelSync(mapView);
+    });
+
+    //  Mouse click data query
+    // inputs the geometry of the data query feature, and matches to it. 
+    function dataQueryQuerytask (url, geometry) {
+        var queryTask = new QueryTask({
+        url: url
+        });
+        var params = new Query({
+        geometry: geometry,
+        returnGeometry: true,
+        outFields: ["own_name" ,"parcel_id" , "state_par_", "pli_code", "no_lnd_unt", "av_nsd", "twn", "rng", "sec", "s_legal"]
+        });
+        console.log(geometry);
+        return queryTask.execute(params);
+    }
+
+    function togglePanel() {
+        console.log('toggling panels');
+       $('#allpanelsDiv > div').each(function () {
+         // turn off all panels that are not target
+         if (this.id != 'panelPopup') {
+           this.setAttribute('class', 'panel collapse');
+           this.setAttribute('style', 'height:0px;');
+   
+         } else {
+           this.setAttribute('class', 'panel collapse in');
+           this.setAttribute('style', 'height:auto;');
+           $( '#' + this.id + '>div').each(function() {
+             if (this.id === 'collapsePopup') {
+               this.setAttribute('class', 'panel-collapse collapse in');
+               this.setAttribute('style', 'height:auto;');
+             }
+   
+           });
+           
+         }
+   
+       });
+   
+     }
+
+    query(mapView).on('click', function(response) {
+        console.log(response);
+        dataQueryQuerytask(parcelsLayerURL + '/0', response.mapPoint)
+        .then(function(response) {
+            console.log(response) 
+            selectionLayer.graphics.removeAll();
+            highlightGraphic = new Graphic(response.features[0].geometry, highlightSymbol);
+            selectionLayer.graphics.add(highlightGraphic);
+            $('#ownerdiv').html('<b>Owner Name:</b> ' + response.features[0].attributes.own_name);
+            $('#parcelIDdiv').html('<b>Parcel ID:</b> ' + response.features[0].attributes.parcel_id);
+            $('#stateParceldiv').html('<b>State Parcel ID:</b> ' + response.features[0].attributes.state_par_);
+            $('#pliCodediv').html('<b>PLI Code:</b> ' + response.features[0].attributes.pli_code);
+            $('#valuediv').html('<b>Value:</b> $' + response.features[0].attributes.av_nsd.toLocaleString());
+            $('#sizediv').html('<b>Size:</b> ' + parcelData[0].attributes.no_lnd_unt.toLocaleString() + ' Acres');
+            $('#trsdiv').html('<b>Township, Range, Section:</b> ' + response.features[0].attributes.twn + ' ' + response.features[0].attributes.rng + ' ' + response.features[0].attributes.sec);
+            $('#legaldiv').html('<b>Legal Description:</b> ' + response.features[0].attributes.s_legal);
+            return response;
+
+        })
+        .then(togglePanel());
     });
 
     //  Dropdown panel function
@@ -350,6 +412,9 @@ require([
         }]
     });
 
+    var clearBtn = document.getElementById("clearButton");
+    mapView.ui.add(clearBtn, "top-left");
+
     // Set initial opacity value
     mapView.when(parcelsLayer.opacity=.5);
 
@@ -481,4 +546,28 @@ require([
             window.open("http://floridapli.net/");
         }
     });
+
+    // Clear all graphics and div elements of information panel  
+    clearBtn = dom.byId("clearButton");
+
+    query(clearBtn). on("click", function (response) {
+        selectionLayer.graphics.removeAll();
+        $('#arraylengthdiv').html('');
+        $('#ownerdiv').html('');
+        $('#parcelIDdiv').html('');
+        $('#stateParceldiv').html('');
+        $('#pliCodediv').html('');
+        $('#valuediv').html('');
+        $('#sizediv').html('');
+        $('#trsdiv').html('');
+        $('#legaldiv').html(''); 
+
+    });
+
+    // clearBtn = dom.byId("clearButton");
+    // console.log(clearBtn);
+    // clearBtn.on("click", function () {
+    //     console.log("clicked");
+    //     selectionLayer.graphics.removeAll();
+    // });
 });
