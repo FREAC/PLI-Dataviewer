@@ -94,8 +94,7 @@ require([
             id: 0,
             title: "State Agencies",
             visible: true,
-            minScale: 150000,
-            popupTemplate: parcelsTemplate
+            minScale: 150000
         }]
     });
 
@@ -128,6 +127,61 @@ require([
         CalciteMapArcGISSupport.setPopupPanelSync(mapView);
     });
 
+    //  Mouse click data query
+    // inputs the geometry of the data query feature, and matches to it. 
+    function mouseclickQueryTask (url, geometry) {
+        var queryTask = new QueryTask({
+        url: url
+        });
+        var params = new Query({
+        geometry: geometry,
+        returnGeometry: true,
+        outFields: ["own_name" ,"parcel_id" , "state_par_", "pli_code", "no_lnd_unt", "av_nsd", "twn", "rng", "sec", "s_legal"]
+        });
+        return queryTask.execute(params);
+    }
+
+    function togglePanel() {
+       $('#allpanelsDiv > div').each(function () {
+         // turn off all panels that are not target
+         if (this.id != 'panelPopup') {
+           this.setAttribute('class', 'panel collapse');
+           this.setAttribute('style', 'height:0px;');
+         } else {
+           this.setAttribute('class', 'panel collapse in');
+           this.setAttribute('style', 'height:auto;');
+           $( '#' + this.id + '>div').each(function() {
+             if (this.id === 'collapsePopup') {
+               this.setAttribute('class', 'panel-collapse collapse in');
+               this.setAttribute('style', 'height:auto;');
+             }
+           });
+         }
+       });
+     }
+
+    query(mapView).on('click', function(response) {
+        mouseclickQueryTask(parcelsLayerURL + '/0', response.mapPoint)
+        .then(function(response) {
+            selectionLayer.graphics.removeAll();
+            highlightGraphic = new Graphic(response.features[0].geometry, highlightSymbol);
+            selectionLayer.graphics.add(highlightGraphic);
+            $('#ownerdiv').html('<b>Owner Name:</b> ' + response.features[0].attributes.own_name);
+            $('#parcelIDdiv').html('<b>Parcel ID:</b> ' + response.features[0].attributes.parcel_id);
+            $('#stateParceldiv').html('<b>State Parcel ID:</b> ' + response.features[0].attributes.state_par_);
+            $('#pliCodediv').html('<b>PLI Code:</b> ' + response.features[0].attributes.pli_code);
+            $('#valuediv').html('<b>Value:</b> $' + response.features[0].attributes.av_nsd.toLocaleString());
+            $('#sizediv').html('<b>Size:</b> ' + response.features[0].attributes.no_lnd_unt.toLocaleString() + ' Acres');
+            $('#trsdiv').html('<b>Township, Range, Section:</b> ' + response.features[0].attributes.twn + ' ' + response.features[0].attributes.rng + ' ' + response.features[0].attributes.sec);
+            $('#legaldiv').html('<b>Legal Description:</b> ' + response.features[0].attributes.s_legal);
+            $('#arraylengthdiv').html('Parcel ' + 1 + ' of ' + response.features.length);
+            $('#numinput').val(1);
+            $('#selectAgencyPanel').val(response.features[0].attributes.own_name);
+            return response;
+        })
+        .then(togglePanel());
+    });
+
     //  Dropdown panel function
     function buildSelectPanel(url, attribute, zoomParam, panelParam) {
 
@@ -136,7 +190,7 @@ require([
         });
   
         var params = new Query({
-          where: "1 = 1 AND " + attribute + " IS NOT NULL",
+          where: attribute + " IS NOT NULL",
           outFields: [attribute],
           returnDistinctValues: true,
           returnExceededLimitFeatures: true,
@@ -350,6 +404,9 @@ require([
         }]
     });
 
+    var clearBtn = document.getElementById("clearButton");
+    mapView.ui.add(clearBtn, "top-left");
+
     // Set initial opacity value
     mapView.when(parcelsLayer.opacity=.5);
 
@@ -402,7 +459,6 @@ require([
             // Highlight the selected parcel
             highlightGraphic = new Graphic(parcelData[indexVal].geometry, highlightSymbol);
             selectionLayer.graphics.add(highlightGraphic);
-
         } else {
             $('#numinput').val(currentIndex);
         }
@@ -411,74 +467,71 @@ require([
     // Listen for the back button
     query("#back").on("click", function() {
         if ($('#numinput').val() > 1) {
-
-            value = $('#numinput').val();
-            value = parseInt(value);
-            indexParcels(--value);
-            $('#numinput').val(value);
-
-            // Determine the index value
-            var parcelVal = $('#numinput').val();
-            var indexVal = parcelVal - 1;
-
-            // Go to the selected parcel
-            var ext = parcelData[indexVal].geometry.extent;
-            var cloneExt = ext.clone();
-            mapView.goTo({
-                target: parcelData[indexVal],
-                extent: cloneExt.expand(1.75)
-            });
-
-            // Remove current selection
-            selectionLayer.graphics.removeAll();
-
-            // Highlight the selected parcel
-            highlightGraphic = new Graphic(parcelData[indexVal].geometry, highlightSymbol);
-            selectionLayer.graphics.add(highlightGraphic);
+            updateIndex("back");
         }        
     });
 
     // Listen for forward button
     query("#forward").on("click", function() {
         if ($('#numinput').val() < parcelData.length) {
-
-            value = $('#numinput').val();
-            value = parseInt(value);
-            indexParcels(++value);
-            $('#numinput').val(value);
-
-            // Determine the index value
-            var parcelVal = $('#numinput').val();
-            var indexVal = parcelVal - 1;
-
-            // Go to the selected parcel
-            var ext = parcelData[indexVal].geometry.extent;
-            var cloneExt = ext.clone();
-            mapView.goTo({
-                target: parcelData[indexVal],
-                extent: cloneExt.expand(1.75)
-            });
-
-            // Remove current selection
-            selectionLayer.graphics.removeAll();
-
-            // Highlight the selected parcel
-            highlightGraphic = new Graphic(parcelData[indexVal].geometry, highlightSymbol);
-            selectionLayer.graphics.add(highlightGraphic);
+            updateIndex("forward");
         }
     });
+
+    function updateIndex(button) {
+
+        value = $('#numinput').val();
+        value = parseInt(value);
+        if (button === "forward") {
+            indexParcels(++value);
+        } else {
+            indexParcels(--value);
+        }
+        $('#numinput').val(value);
+
+        // Determine the index value
+        var parcelVal = $('#numinput').val();
+        var indexVal = parcelVal - 1;
+
+        // Go to the selected parcel
+        var ext = parcelData[indexVal].geometry.extent;
+        var cloneExt = ext.clone();
+        mapView.goTo({
+            target: parcelData[indexVal],
+            extent: cloneExt.expand(1.75)
+        });
+
+        // Remove current selection
+        selectionLayer.graphics.removeAll();
+
+        // Highlight the selected parcel
+        highlightGraphic = new Graphic(parcelData[indexVal].geometry, highlightSymbol);
+        selectionLayer.graphics.add(highlightGraphic);
+    }
 
     searchWidget.on("search-complete", function(event) {
         // The results are stored in the event Object[]
         var owner = event.results[0].results[0].feature.attributes.own_name;
         var parcel = event.results[0].results[0].feature.attributes.parcel_id;
         querySearch(owner, parcel);
+        togglePanel();
     });
 
-    // Popup Link event listener
-    mapView.popup.on("trigger-action", function (event) {
-        if (event.action.id === "pliWebsite") {
-            window.open("http://floridapli.net/");
-        }
+    // Clear all graphics and div elements of information panel  
+    clearBtn = dom.byId("clearButton");
+
+    query(clearBtn). on("click", function (response) {
+        selectionLayer.graphics.removeAll();
+        $('#arraylengthdiv').html('');
+        $('#ownerdiv').html('');
+        $('#parcelIDdiv').html('');
+        $('#stateParceldiv').html('');
+        $('#pliCodediv').html('');
+        $('#valuediv').html('');
+        $('#sizediv').html('');
+        $('#trsdiv').html('');
+        $('#legaldiv').html('');
+        $('#numinput').val('');
+        $('#selectAgencyPanel')[0].selectedIndex = 0;
     });
 });

@@ -47,6 +47,19 @@
       display: flex;
       justify-content: space-around;
     }
+    #clearButton {
+      width: 32px;
+      height: 32px;
+    }
+    .esri-icon-erase {
+      position: absolute;
+      
+      transform: translate(-50%, -50%);
+      width: 11px;
+      height: 16px;
+      display: block;
+    }
+
   </style>
 </head>
 
@@ -93,12 +106,16 @@
 
   <!-- Map  -->
   <div class="calcite-map calcite-map-absolute">
-    <div id="mapViewDiv"></div>
+    <div id="mapViewDiv">
+      <button title="Clear graphics" type="button" class="btn btn-default" id="clearButton">
+        <span class="esri-icon-erase"></span>
+      </button>
+    </div>
   </div>
   <!-- /.calcite-map -->
 
   <!-- Panels -->
-  <div class="calcite-panels calcite-panels-right calcite-text-light calcite-bg-custom panel-group" style="background-color: #699999">
+  <div id="allpanelsDiv" div class="calcite-panels calcite-panels-right calcite-text-light calcite-bg-custom panel-group" style="background-color: #699999">
 
     <!-- Panel - Info  -->
     <div id="panelInfo" class="panel collapse in">
