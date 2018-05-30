@@ -94,8 +94,7 @@ require([
             id: 0,
             title: "State Agencies",
             visible: true,
-            minScale: 150000,
-            //popupTemplate: parcelsTemplate
+            minScale: 150000
         }]
     });
 
@@ -475,62 +474,47 @@ require([
     // Listen for the back button
     query("#back").on("click", function() {
         if ($('#numinput').val() > 1) {
-
-            value = $('#numinput').val();
-            value = parseInt(value);
-            indexParcels(--value);
-            $('#numinput').val(value);
-
-            // Determine the index value
-            var parcelVal = $('#numinput').val();
-            var indexVal = parcelVal - 1;
-
-            // Go to the selected parcel
-            var ext = parcelData[indexVal].geometry.extent;
-            var cloneExt = ext.clone();
-            mapView.goTo({
-                target: parcelData[indexVal],
-                extent: cloneExt.expand(1.75)
-            });
-
-            // Remove current selection
-            selectionLayer.graphics.removeAll();
-
-            // Highlight the selected parcel
-            highlightGraphic = new Graphic(parcelData[indexVal].geometry, highlightSymbol);
-            selectionLayer.graphics.add(highlightGraphic);
+            updateIndex("back");
         }        
     });
 
     // Listen for forward button
     query("#forward").on("click", function() {
         if ($('#numinput').val() < parcelData.length) {
-
-            value = $('#numinput').val();
-            value = parseInt(value);
-            indexParcels(++value);
-            $('#numinput').val(value);
-
-            // Determine the index value
-            var parcelVal = $('#numinput').val();
-            var indexVal = parcelVal - 1;
-
-            // Go to the selected parcel
-            var ext = parcelData[indexVal].geometry.extent;
-            var cloneExt = ext.clone();
-            mapView.goTo({
-                target: parcelData[indexVal],
-                extent: cloneExt.expand(1.75)
-            });
-
-            // Remove current selection
-            selectionLayer.graphics.removeAll();
-
-            // Highlight the selected parcel
-            highlightGraphic = new Graphic(parcelData[indexVal].geometry, highlightSymbol);
-            selectionLayer.graphics.add(highlightGraphic);
+            updateIndex("forward");
         }
     });
+
+    function updateIndex(button) {
+
+        value = $('#numinput').val();
+        value = parseInt(value);
+        if (button === "forward") {
+            indexParcels(++value);
+        } else {
+            indexParcels(--value);
+        }
+        $('#numinput').val(value);
+
+        // Determine the index value
+        var parcelVal = $('#numinput').val();
+        var indexVal = parcelVal - 1;
+
+        // Go to the selected parcel
+        var ext = parcelData[indexVal].geometry.extent;
+        var cloneExt = ext.clone();
+        mapView.goTo({
+            target: parcelData[indexVal],
+            extent: cloneExt.expand(1.75)
+        });
+
+        // Remove current selection
+        selectionLayer.graphics.removeAll();
+
+        // Highlight the selected parcel
+        highlightGraphic = new Graphic(parcelData[indexVal].geometry, highlightSymbol);
+        selectionLayer.graphics.add(highlightGraphic);
+    }
 
     searchWidget.on("search-complete", function(event) {
         // The results are stored in the event Object[]
