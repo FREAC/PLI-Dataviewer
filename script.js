@@ -147,7 +147,6 @@ require([
          if (this.id != 'panelPopup') {
            this.setAttribute('class', 'panel collapse');
            this.setAttribute('style', 'height:0px;');
-   
          } else {
            this.setAttribute('class', 'panel collapse in');
            this.setAttribute('style', 'height:auto;');
@@ -156,13 +155,9 @@ require([
                this.setAttribute('class', 'panel-collapse collapse in');
                this.setAttribute('style', 'height:auto;');
              }
-   
            });
-           
          }
-   
        });
-   
      }
 
     query(mapView).on('click', function(response) {
@@ -181,9 +176,8 @@ require([
             $('#legaldiv').html('<b>Legal Description:</b> ' + response.features[0].attributes.s_legal);
             $('#arraylengthdiv').html('Parcel ' + 1 + ' of ' + response.features.length);
             $('#numinput').val(1);
-            $('#selectAgencyPanel').val(response.features[0].attributes.own_name);            
+            $('#selectAgencyPanel').val(response.features[0].attributes.own_name);
             return response;
-
         })
         .then(togglePanel());
     });
@@ -196,7 +190,7 @@ require([
         });
   
         var params = new Query({
-          where: "1 = 1 AND " + attribute + " IS NOT NULL",
+          where: attribute + " IS NOT NULL",
           outFields: [attribute],
           returnDistinctValues: true,
           returnExceededLimitFeatures: true,
@@ -465,7 +459,6 @@ require([
             // Highlight the selected parcel
             highlightGraphic = new Graphic(parcelData[indexVal].geometry, highlightSymbol);
             selectionLayer.graphics.add(highlightGraphic);
-
         } else {
             $('#numinput').val(currentIndex);
         }
@@ -537,7 +530,8 @@ require([
         $('#valuediv').html('');
         $('#sizediv').html('');
         $('#trsdiv').html('');
-        $('#legaldiv').html(''); 
+        $('#legaldiv').html('');
+        $('#numinput').val('');
+        $('#selectAgencyPanel')[0].selectedIndex = 0;
     });
-
 });
