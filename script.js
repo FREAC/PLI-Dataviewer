@@ -130,7 +130,7 @@ require([
 
     //  Mouse click data query
     // inputs the geometry of the data query feature, and matches to it. 
-    function dataQueryQuerytask (url, geometry) {
+    function mouseclickQueryTask (url, geometry) {
         var queryTask = new QueryTask({
         url: url
         });
@@ -139,12 +139,10 @@ require([
         returnGeometry: true,
         outFields: ["own_name" ,"parcel_id" , "state_par_", "pli_code", "no_lnd_unt", "av_nsd", "twn", "rng", "sec", "s_legal"]
         });
-        console.log(geometry);
         return queryTask.execute(params);
     }
 
     function togglePanel() {
-        console.log('toggling panels');
        $('#allpanelsDiv > div').each(function () {
          // turn off all panels that are not target
          if (this.id != 'panelPopup') {
@@ -169,10 +167,8 @@ require([
      }
 
     query(mapView).on('click', function(response) {
-        console.log(response);
-        dataQueryQuerytask(parcelsLayerURL + '/0', response.mapPoint)
+        mouseclickQueryTask(parcelsLayerURL + '/0', response.mapPoint)
         .then(function(response) {
-            console.log(response) 
             selectionLayer.graphics.removeAll();
             highlightGraphic = new Graphic(response.features[0].geometry, highlightSymbol);
             selectionLayer.graphics.add(highlightGraphic);
@@ -181,9 +177,12 @@ require([
             $('#stateParceldiv').html('<b>State Parcel ID:</b> ' + response.features[0].attributes.state_par_);
             $('#pliCodediv').html('<b>PLI Code:</b> ' + response.features[0].attributes.pli_code);
             $('#valuediv').html('<b>Value:</b> $' + response.features[0].attributes.av_nsd.toLocaleString());
-            $('#sizediv').html('<b>Size:</b> ' + parcelData[0].attributes.no_lnd_unt.toLocaleString() + ' Acres');
+            $('#sizediv').html('<b>Size:</b> ' + response.features[0].attributes.no_lnd_unt.toLocaleString() + ' Acres');
             $('#trsdiv').html('<b>Township, Range, Section:</b> ' + response.features[0].attributes.twn + ' ' + response.features[0].attributes.rng + ' ' + response.features[0].attributes.sec);
             $('#legaldiv').html('<b>Legal Description:</b> ' + response.features[0].attributes.s_legal);
+            $('#arraylengthdiv').html('Parcel ' + 1 + ' of ' + response.features.length);
+            $('#numinput').val(1);
+            $('#selectAgencyPanel').val(response.features[0].attributes.own_name);            
             return response;
 
         })
@@ -538,13 +537,7 @@ require([
         var owner = event.results[0].results[0].feature.attributes.own_name;
         var parcel = event.results[0].results[0].feature.attributes.parcel_id;
         querySearch(owner, parcel);
-    });
-
-    // Popup Link event listener
-    mapView.popup.on("trigger-action", function (event) {
-        if (event.action.id === "pliWebsite") {
-            window.open("http://floridapli.net/");
-        }
+        togglePanel();
     });
 
     // Clear all graphics and div elements of information panel  
@@ -561,13 +554,6 @@ require([
         $('#sizediv').html('');
         $('#trsdiv').html('');
         $('#legaldiv').html(''); 
-
     });
 
-    // clearBtn = dom.byId("clearButton");
-    // console.log(clearBtn);
-    // clearBtn.on("click", function () {
-    //     console.log("clicked");
-    //     selectionLayer.graphics.removeAll();
-    // });
 });
