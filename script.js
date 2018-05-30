@@ -533,5 +533,6 @@ require([
         $('#legaldiv').html('');
         $('#numinput').val('');
         $('#selectAgencyPanel')[0].selectedIndex = 0;
+        parcelData = [];
     });
 });
