@@ -163,6 +163,7 @@ require([
     query(mapView).on('click', function(response) {
         mouseclickQueryTask(parcelsLayerURL + '/0', response.mapPoint)
         .then(function(response) {
+            mapView.graphics.removeAll();
             selectionLayer.graphics.removeAll();
             highlightGraphic = new Graphic(response.features[0].geometry, highlightSymbol);
             selectionLayer.graphics.add(highlightGraphic);
@@ -419,6 +420,7 @@ require([
 
     // Watch search result
     searchWidget.on("select-result", function(event) {
+        console.log(event);
         var ext = event.result.extent;
         var cloneExt = ext.clone();
         mapView.goTo({
@@ -510,6 +512,7 @@ require([
     }
 
     searchWidget.on("search-complete", function(event) {
+        selectionLayer.graphics.removeAll();
         // The results are stored in the event Object[]
         var owner = event.results[0].results[0].feature.attributes.own_name;
         var parcel = event.results[0].results[0].feature.attributes.parcel_id;
