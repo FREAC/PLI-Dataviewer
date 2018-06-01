@@ -524,6 +524,7 @@ require([
     clearBtn = dom.byId("clearButton");
 
     query(clearBtn). on("click", function (response) {
+        mapView.graphics.removeAll();
         selectionLayer.graphics.removeAll();
         $('#arraylengthdiv').html('');
         $('#ownerdiv').html('');
