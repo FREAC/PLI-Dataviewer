@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+
+  <meta name="viewport" content="initial-scale=1, maximum-scale=1,user-scalable=no">
+  <title>Parcel Locator</title>
+
+  <link rel="stylesheet" href="http://js.arcgis.com/4.8/esri/css/main.css">
+  <style>
+    html,
+    body,
+    #map {
+      height: 100%;
+      width: 100%;
+      margin: 0;
+      padding: 0;
+    }
+  </style>
+
+  <script>
+    var dojoConfig = {
+      has: {
+        "esri-featurelayer-webgl": 1
+      }
+    };
+  </script>
+  <script src="http://js.arcgis.com/4.8/"></script>
+  <script>
+    var map;
+    var parcels;
+    require([
+      "esri/Map", "esri/views/MapView", "esri/layers/FeatureLayer",
+      "esri/layers/TileLayer", "esri/tasks/support/Query",
+      "esri/symbols/SimpleFillSymbol", "esri/symbols/SimpleLineSymbol",
+      "esri/Graphic", "esri/widgets/Popup",
+      "esri/core/urlUtils",
+      "esri/Color",
+      "dojo/on", "dojo/query", "dojo/parser", "dojo/dom-construct",
+
+      "dijit/layout/BorderContainer", "dijit/layout/ContentPane", "dojo/domReady!"
+    ], function (
+      Map, MapView, FeatureLayer,
+      TileLayer, Query,
+      SimpleFillSymbol, SimpleLineSymbol,
+      Graphic, Popup,
+      urlUtils,
+      Color,
+      on, query, parser, domConstruct
+    ) {
+      parser.parse();
+
+      var popup = new Popup({
+        container: domConstruct.create("div")
+      });
+
+      var basemap = new TileLayer({
+        url: "http://sampleserver1.arcgisonline.com/ArcGIS/rest/services/TaxParcel/AssessorsBasemap/MapServer"
+      });
+      map = new Map({
+        layers: [basemap]
+      });
+
+      var view = new MapView({
+        container: "viewDiv",
+        map: map,
+        popup: popup
+      });
+
+      //apply a popup template to the parcels layer to format popup info
+      var popupTemplate = {
+        title: "{PARCELID}",
+        content: [{
+          type: "fields",
+          fieldInfos: [{
+            fieldName: "SITEADDRESS",
+            label: "Address:",
+            visible: true
+          }, {
+            fieldName: "OWNERNME1",
+            label: "Owner:",
+            visible: true
+          }]
+        }],
+        actions: [{
+          id: "Email-Map",
+          className: "esri-icon-contact",
+          title: "Email Map"
+        }],
+      };
+
+      //add the parcels layer to the map as a feature layer in selection mode we'll use this layer to query and display the selected parcels
+      parcels = new FeatureLayer({
+        url: " http://sampleserver1.arcgisonline.com/ArcGIS/rest/services/TaxParcel/AssessorsBasemap/MapServer/1",
+        outFields: ["*"],
+        popupTemplate: popupTemplate
+      });
+
+      view.when(function () {
+        // Watch for when features are selected
+        view.popup.watch("selectedFeature", function (graphic) {
+          if (graphic) {
+            var parcelid = graphic.attributes["PARCELID"];
+            //Refresh the URL with the currently selected parcel
+            if (typeof history.pushState !== "undefined") {
+              window.history.pushState(null, null, "?parcelid=" + graphic.attributes.PARCELID);
+            }
+          }
+        });
+      });
+
+      view.when(function () {
+        var popup = view.popup;
+        popup.viewModel.on("trigger-action", function (event) {
+          if (event.action.id === "Email-Map") {
+            var attributes = popup.viewModel.selectedFeature.attributes;
+            // Get the 'PARCELID' field attribute
+            var info = attributes.PARCELID;
+            // Make sure the 'PARCELID' field value is not null
+            if (info) {
+              var url = window.location;
+              var emailLink = "mailto:?subject=Parcel Map of :" +
+                info + "&body=Check out this map: %0D%0A " +
+                window.location;
+              window.location.href = emailLink;
+            }
+          }
+        });
+      });
+
+      parcels.when(function () {
+        // Add a link into the InfoWindow Actions panel
+        var emailLink = domConstruct.create("a", {
+          "class": "action",
+          "innerHTML": "Email Map",
+          "href": "javascript:void(0);"
+        }, query(".actionList", view.popup.domNode)[0]);
+
+        //When users navigate through the history using the browser back/forward buttons select appropriate parcel
+        //http://developer.mozilla.org/en/DOM/Manipulating_the_browser_history
+        window.onpopstate = function (event) {
+          var parcelid = getParcelFromUrl(document.location.href);
+          if (parcelid) {
+            selectParcel(parcelid);
+          } else {
+            //parcels.clearSelection();
+            view.popup.close();
+          }
+        };
+
+        //if a parcelid is specified in url param select that feature
+        var parcelid = getParcelFromUrl(document.location.href);
+        selectParcel(parcelid);
+      });
+
+      map.add(parcels);
+
+      //extract the parcel id from the url
+      function getParcelFromUrl(url) {
+        var urlObject = urlUtils.urlToObject(url);
+        if (urlObject.query && urlObject.query.parcelid) {
+          return urlObject.query.parcelid;
+        } else {
+          return null;
+        }
+      }
+
+      //select parcel from the feature layer by creating a query to look for the input parcel id
+      function selectParcel(parcelid) {
+        if (parcelid) {
+          var query = parcels.createQuery();
+          query.where = "PARCELID = '" + parcelid + "'";
+          var deferred = parcels.queryFeatures(query).then(function (selection) {
+            var center = selection.features[0].geometry.extent.center;
+            var extHandler = view.watch("stationary", function () {
+              extHandler.remove();
+              //zoom to the center then display the popup
+              view.popup.open({
+                location: center,
+                features: selection.features,
+                updateLocationEnabled: true
+              });
+            });
+            view.goTo({
+              target: center,
+              zoom: 8
+            });
+          });
+        }
+      }
+    });
+  </script>
+</head>
+
+<body class="claro">
+  <div data-dojo-type="dijit/layout/BorderContainer" data-dojo-props="design:'headline',gutters:false" style="width: 100%; height: 100%; margin: 0;">
+    <div id="viewDiv" data-dojo-type="dijit/layout/ContentPane" data-dojo-props="region:'center'"></div>
+  </div>
+</body>
+
+</html>

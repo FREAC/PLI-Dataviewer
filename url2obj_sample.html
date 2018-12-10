@@ -7,7 +7,7 @@
     <meta name="viewport" content="initial-scale=1, maximum-scale=1,user-scalable=no">
     <title>Parcel Locator</title>
 
-    <link rel="stylesheet" href="http://js.arcgis.com/4.8/esri/css/main.css">
+    <link rel="stylesheet" href="https://js.arcgis.com/4.8/esri/css/main.css">
     <style>
         html,
         body,
@@ -55,44 +55,87 @@
                 container: domConstruct.create("div")
             });
 
-            var basemap = new TileLayer({
-                url: "http://sampleserver1.arcgisonline.com/ArcGIS/rest/services/TaxParcel/AssessorsBasemap/MapServer"
-            });
+            // var basemap = new TileLayer({
+            //     url: "https://admin205.ispa.fsu.edu/arcgis/rest/services/PLI/PLI_2017/MapServer"
+            // });
             map = new Map({
-                layers: [basemap]
+                // layers: [basemap]
+                layers: [],
+                basemap: "topo"
             });
 
             var view = new MapView({
                 container: "viewDiv",
                 map: map,
-                popup: popup
+                popup: popup,
+                zoom: 7
             });
 
-            //apply a popup template to the parcels layer to format popup info
+            // // //apply a popup template to the parcels layer to format popup info
+            // // var popupTemplate = {
+            // //     title: "{Parcel Imformation}",
+            // //     content: [{
+            // //         type: "fields",
+            // //         fieldInfos: [{
+            // //             fieldName: "own_name",
+            // //             label: "Owner Name:",
+            // //             visible: true
+            // //         }, {
+            // //             fieldName: "parcel_id",
+            // //             label: "Parcel ID:",
+            // //             visible: true
+            // //             // }, {
+            // //             //     fieldName: "state_par_",
+            // //             //     label: "Stat:",
+            // //             //     visible: true
+            // //             // }, {
+            // //             //     fieldName: "pli_code",
+            // //             //     label: "Owner:",
+            // //             //     visible: true
+            // //             // }, {
+            // //             //     fieldName: "av_nsd",
+            // //             //     label: "Owner:",
+            // //             //     visible: true
+            // //             // }, {
+            // //             //     fieldName: "no_lnd_unt",
+            // //             //     label: "Owner:",
+            // //             //     visible: true
+            // //             // }, {
+            // //             //     fieldName: "twn" + "rng" + "sec",
+            // //             //     label: "Township, Range, Section",
+            // //             //     visible: true
+            // //             // }, {
+            // //             //     fieldName: "s_legal",
+            // //             //     label: "Owner:",
+            // //             //     visible: true
+            // //             // }, {
+            // //             //     fieldName: "length",
+            // //             //     label: "Owner:",
+            // //             //     visible: true
+            // //         }]
+            // //     }],
+
+            //     actions: [{
+            //         id: "Email-Map",
+            //         className: "esri-icon-contact",
+            //         title: "Email Map"
+            //     }],
+            // };
+
             var popupTemplate = {
-                title: "{PARCELID}",
-                content: [{
-                    type: "fields",
-                    fieldInfos: [{
-                        fieldName: "SITEADDRESS",
-                        label: "Address:",
-                        visible: true
-                    }, {
-                        fieldName: "OWNERNME1",
-                        label: "Owner:",
-                        visible: true
-                    }]
-                }],
-                actions: [{
-                    id: "Email-Map",
-                    className: "esri-icon-contact",
-                    title: "Email Map"
-                }],
-            };
+                title: 'Owner: {own_name}',
+                content: "<p><b>Parcel ID:</b> {parcel_id}</p>" +
+                    "<p><b>State Parcel ID:</b> {state_par_}</p>" +
+                    "<p><b>PLI Code:</b> {pli_code}</p>" +
+                    "<p><b>Size:</b> {no_lnd_unt:NumberFormat(places: 2)} Acres<p>" +
+                    "<p><b>Value:</b> ${av_nsd:NumberFormat(places: 2)}</p>" +
+                    "<p><b>TRS:</b> {twn} {rng} {sec}</p>" +
+                    "<p><b>Legal Description:</b> {s_legal}</p>",
+            }
 
             //add the parcels layer to the map as a feature layer in selection mode we'll use this layer to query and display the selected parcels
             parcels = new FeatureLayer({
-                url: " http://sampleserver1.arcgisonline.com/ArcGIS/rest/services/TaxParcel/AssessorsBasemap/MapServer/1",
+                url: "https://admin205.ispa.fsu.edu/arcgis/rest/services/PLI/PLI_2017/MapServer",
                 outFields: ["*"],
                 popupTemplate: popupTemplate
             });
@@ -101,11 +144,11 @@
                 // Watch for when features are selected
                 view.popup.watch("selectedFeature", function (graphic) {
                     if (graphic) {
-                        var parcelid = graphic.attributes["PARCELID"];
+                        var parcel_id = graphic.attributes["parcel_id"];
                         //Refresh the URL with the currently selected parcel
                         if (typeof history.pushState !== "undefined") {
-                            window.history.pushState(null, null, "?parcelid=" + graphic.attributes
-                                .PARCELID);
+                            window.history.pushState(null, null, "?parcel_id=" + graphic.attributes
+                                .parcel_id);
                         }
                     }
                 });
@@ -116,9 +159,9 @@
                 popup.viewModel.on("trigger-action", function (event) {
                     if (event.action.id === "Email-Map") {
                         var attributes = popup.viewModel.selectedFeature.attributes;
-                        // Get the 'PARCELID' field attribute
-                        var info = attributes.PARCELID;
-                        // Make sure the 'PARCELID' field value is not null
+                        // Get the 'parcel_id' field attribute
+                        var info = attributes.parcel_id;
+                        // Make sure the 'parcel_id' field value is not null
                         if (info) {
                             var url = window.location;
                             var emailLink = "mailto:?subject=Parcel Map of :" +
@@ -131,28 +174,28 @@
             });
 
             parcels.when(function () {
-                // Add a link into the InfoWindow Actions panel
-                var emailLink = domConstruct.create("a", {
-                    "class": "action",
-                    "innerHTML": "Email Map",
-                    "href": "javascript:void(0);"
-                }, query(".actionList", view.popup.domNode)[0]);
+                // // Add a link into the InfoWindow Actions panel
+                // var emailLink = domConstruct.create("a", {
+                //     "class": "action",
+                //     "innerHTML": "Email Map",
+                //     "href": "javascript:void(0);"
+                // }, query(".actionList", view.popup.domNode)[0]);
 
                 //When users navigate through the history using the browser back/forward buttons select appropriate parcel
                 //http://developer.mozilla.org/en/DOM/Manipulating_the_browser_history
                 window.onpopstate = function (event) {
-                    var parcelid = getParcelFromUrl(document.location.href);
-                    if (parcelid) {
-                        selectParcel(parcelid);
+                    var parcel_id = getParcelFromUrl(document.location.href);
+                    if (parcel_id) {
+                        selectParcel(parcel_id);
                     } else {
                         //parcels.clearSelection();
                         view.popup.close();
                     }
                 };
 
-                //if a parcelid is specified in url param select that feature
-                var parcelid = getParcelFromUrl(document.location.href);
-                selectParcel(parcelid);
+                //if a parcel_id is specified in url param select that feature
+                var parcel_id = getParcelFromUrl(document.location.href);
+                selectParcel(parcel_id);
             });
 
             map.add(parcels);
@@ -160,18 +203,18 @@
             //extract the parcel id from the url
             function getParcelFromUrl(url) {
                 var urlObject = urlUtils.urlToObject(url);
-                if (urlObject.query && urlObject.query.parcelid) {
-                    return urlObject.query.parcelid;
+                if (urlObject.query && urlObject.query.parcel_id) {
+                    return urlObject.query.parcel_id;
                 } else {
                     return null;
                 }
             }
 
             //select parcel from the feature layer by creating a query to look for the input parcel id
-            function selectParcel(parcelid) {
-                if (parcelid) {
+            function selectParcel(parcel_id) {
+                if (parcel_id) {
                     var query = parcels.createQuery();
-                    query.where = "PARCELID = '" + parcelid + "'";
+                    query.where = "parcel_id = '" + parcel_id + "'";
                     var deferred = parcels.queryFeatures(query).then(function (selection) {
                         var center = selection.features[0].geometry.extent.center;
                         var extHandler = view.watch("stationary", function () {
@@ -183,9 +226,12 @@
                                 updateLocationEnabled: true
                             });
                         });
+                        // Zoom to feature
+                        var ext = selection.features[0].geometry.extent;
+                        var cloneExt = ext.clone();
                         view.goTo({
-                            target: center,
-                            zoom: 8
+                            target: selection.features[0],
+                            extent: cloneExt.expand(1.75)
                         });
                     });
                 }
