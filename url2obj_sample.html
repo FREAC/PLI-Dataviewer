@@ -32,7 +32,8 @@
         var parcels;
         require([
             "esri/Map", "esri/views/MapView", "esri/layers/FeatureLayer",
-            "esri/layers/TileLayer", "esri/tasks/support/Query",
+            "esri/tasks/support/Query", "esri/layers/GraphicsLayer",
+
             "esri/symbols/SimpleFillSymbol", "esri/symbols/SimpleLineSymbol",
             "esri/Graphic", "esri/widgets/Popup",
             "esri/core/urlUtils",
@@ -42,7 +43,7 @@
             "dijit/layout/BorderContainer", "dijit/layout/ContentPane", "dojo/domReady!"
         ], function (
             Map, MapView, FeatureLayer,
-            TileLayer, Query,
+            Query, GraphicsLayer,
             SimpleFillSymbol, SimpleLineSymbol,
             Graphic, Popup,
             urlUtils,
@@ -55,12 +56,13 @@
                 container: domConstruct.create("div")
             });
 
-            // var basemap = new TileLayer({
-            //     url: "https://admin205.ispa.fsu.edu/arcgis/rest/services/PLI/PLI_2017/MapServer"
-            // });
+            var selectionLayer = new GraphicsLayer({
+                listMode: "hide",
+                visible: true
+            });
+
             map = new Map({
-                // layers: [basemap]
-                layers: [],
+                layers: [selectionLayer],
                 basemap: "topo"
             });
 
@@ -79,7 +81,20 @@
                     "<p><b>Value:</b> ${av_nsd:NumberFormat(places: 2)}</p>" +
                     "<p><b>TRS:</b> {twn} {rng} {sec}</p>" +
                     "<p><b>Legal Description:</b> {s_legal}</p>",
-            }
+                actions: [{
+                    id: "Email-Map",
+                    className: "esri-icon-contact",
+                    title: "Email Map"
+                }],
+            };
+
+            var highlightSymbol = new SimpleLineSymbol(
+                SimpleLineSymbol.STYLE_SOLID,
+                new Color([96, 96, 96]), 5);
+
+            var highlightGraphic;
+
+
 
             //add the parcels layer to the map as a feature layer in selection mode we'll use this layer to query and display the selected parcels
             parcels = new FeatureLayer({
@@ -87,6 +102,12 @@
                 outFields: ["*"],
                 popupTemplate: popupTemplate
             });
+
+            query(mapView).on('click', function (response) {
+                // TODO: 
+                //  - Remove highlighted features
+                //  - select next feature
+            })
 
             view.when(function () {
                 // Watch for when features are selected
@@ -122,12 +143,12 @@
             });
 
             parcels.when(function () {
-                // // Add a link into the InfoWindow Actions panel
-                // var emailLink = domConstruct.create("a", {
-                //     "class": "action",
-                //     "innerHTML": "Email Map",
-                //     "href": "javascript:void(0);"
-                // }, query(".actionList", view.popup.domNode)[0]);
+                // Add a link into the InfoWindow Actions panel
+                var emailLink = domConstruct.create("a", {
+                    "class": "action",
+                    "innerHTML": "Email Map",
+                    "href": "javascript:void(0);"
+                }, query(".actionList", view.popup.domNode)[0]);
 
                 //When users navigate through the history using the browser back/forward buttons select appropriate parcel
                 //http://developer.mozilla.org/en/DOM/Manipulating_the_browser_history
@@ -164,6 +185,12 @@
                     var query = parcels.createQuery();
                     query.where = "parcel_id = '" + parcel_id + "'";
                     var deferred = parcels.queryFeatures(query).then(function (selection) {
+
+                        // add graphic to selectionLayer when parcel selected
+                        selectionLayer.graphics.removeAll();
+                        highlightGraphic = new Graphic(selection.features[0].geometry, highlightSymbol);
+                        selectionLayer.graphics.add(highlightGraphic);
+
                         var center = selection.features[0].geometry.extent.center;
                         var extHandler = view.watch("stationary", function () {
                             extHandler.remove();
