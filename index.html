@@ -1,10 +1,11 @@
 <!DOCTYPE html>
 <html>
+
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
   <meta name="description" content="ArcGIS JS v4, Calcite Maps and Bootstrap Example">
-   <title>PLI Dataviewer</title>
+  <title>PLI Dataviewer</title>
 
   <!-- Calcite Maps Bootstrap -->
   <link rel="stylesheet" href="https://esri.github.io/calcite-maps/dist/css/calcite-maps-bootstrap.min-v0.7.css">
@@ -64,6 +65,7 @@
 </head>
 
 <!-- Navbar -->
+
 <body class="calcite-maps calcite-nav-top">
   <nav class="navbar calcite-navbar navbar-fixed-top calcite-text-light calcite-bg-custom" style="background-color: #699999">
 
@@ -79,10 +81,14 @@
         </div>
       </a>
       <ul class="dropdown-menu" role="menu">
-        <li><a role="menuitem" id="#enableInfo"tabindex="0" data-target="#panelInfo" aria-haspopup="true"><span class="glyphicon glyphicon-info-sign"></span> About</a></li>
-        <li><a role="menuitem" tabindex="0" data-target="#panelPopup" aria-haspopup="true"><span class="glyphicon glyphicon-th-list"></span> Parcel Information</a></li>
-        <li><a role="menuitem" tabindex="0" href="#" data-target="#panelLegend" aria-haspopup="true"><span class="glyphicon glyphicon-list-alt"></span> Legend</a></li>
-        <li><a role="menuitem" tabindex="0" href="#" id="calciteToggleNavbar" aria-haspopup="true"><span class="glyphicon glyphicon-fullscreen"></span> Full Map</a></li>
+        <li><a role="menuitem" id="#enableInfo" tabindex="0" data-target="#panelInfo" aria-haspopup="true"><span class="glyphicon glyphicon-info-sign"></span>
+            About</a></li>
+        <li><a role="menuitem" tabindex="0" data-target="#panelPopup" aria-haspopup="true"><span class="glyphicon glyphicon-th-list"></span>
+            Parcel Information</a></li>
+        <li><a role="menuitem" tabindex="0" href="#" data-target="#panelLegend" aria-haspopup="true"><span class="glyphicon glyphicon-list-alt"></span>
+            Legend</a></li>
+        <li><a role="menuitem" tabindex="0" href="#" id="calciteToggleNavbar" aria-haspopup="true"><span class="glyphicon glyphicon-fullscreen"></span>
+            Full Map</a></li>
       </ul>
     </div>
 
@@ -90,7 +96,8 @@
     <div class="calcite-title calcite-overflow-hidden">
       <span class="calcite-title-main">PLI Dataviewer</span>
       <span class="calcite-title-divider hidden-xs"></span>
-      <span class="calcite-title-sub hidden-xs" ><a href="http://floridapli.net/" target="blank">Florida Public Lands Inventory</a></span>
+      <span class="calcite-title-sub hidden-xs"><a href="http://floridapli.net/" target="blank">Florida Public Lands
+          Inventory</a></span>
     </div>
 
     <!-- Nav -->
@@ -115,101 +122,134 @@
   <!-- /.calcite-map -->
 
   <!-- Panels -->
-  <div id="allpanelsDiv" div class="calcite-panels calcite-panels-right calcite-text-light calcite-bg-custom panel-group" style="background-color: #699999">
+  <div id="allpanelsDiv" div class="calcite-panels calcite-panels-right calcite-text-light calcite-bg-custom panel-group"
+    style="background-color: #699999">
 
     <!-- Panel - Info  -->
     <div id="panelInfo" class="panel collapse in">
       <div id="headingInfo" class="panel-heading" role="tab">
         <div class="panel-title">
-          <a class="panel-toggle" role="button" data-toggle="collapse" href="#collapseInfo"  aria-expanded="true" aria-controls="collapseInfo"><span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span><span class="panel-label">About</span></a> 
-          <a class="panel-close" role="button" data-toggle="collapse" tabindex="0" href="#panelInfo"><span class="esri-icon esri-icon-close" aria-hidden="true"></span></a>  
+          <a class="panel-toggle" role="button" data-toggle="collapse" href="#collapseInfo" aria-expanded="true"
+            aria-controls="collapseInfo"><span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span><span
+              class="panel-label">About</span></a>
+          <a class="panel-close" role="button" data-toggle="collapse" tabindex="0" href="#panelInfo"><span class="esri-icon esri-icon-close"
+              aria-hidden="true"></span></a>
         </div>
       </div>
       <div id="collapseInfo" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="headingInfo">
         <div class="panel-body">
           <h4>Florida Public Lands Inventory:<br>Parcel Zoom Tool</h4>
-          <p>This is a parcel zoom tool that functions to zoom to any public land parcel within the state of Florida. </p>
+          <p>This is a parcel zoom tool that functions to zoom to any public land parcel within the state of Florida.
+          </p>
           <h4>Search by text:</h3>
-          <p>Use the search widget by choosing the "Florida Public Land Inventories Parcels" option within the navigation bar to search for a parcel by ID, city, or parcel name.</p>
-          <h4>Search by parcel owner:</h3>
-          <p>Use the Parcel Information panel to filter parcels owned by state agency</p>
-          <a href="http://floridapli.net/" target="_blank">Visit the Florida Public Lands Inventory Website</a>
+            <p>Use the search widget by choosing the "Florida Public Land Inventories Parcels" option within the
+              navigation bar to search for a parcel by ID, city, or parcel name.</p>
+            <h4>Search by parcel owner:</h3>
+              <p>Use the Parcel Information panel to filter parcels owned by state agency</p>
+              <a href="http://floridapli.net/" target="_blank">Visit the Florida Public Lands Inventory Website</a>
         </div>
-     </div>
+      </div>
     </div>
 
     <!-- Panel - Legend -->
     <div id="panelLegend" class="panel collapse">
       <div id="headingLegend" class="panel-heading" role="tab">
         <div class="panel-title">
-          <a class="panel-toggle" role="button" data-toggle="collapse" href="#collapseLegend" aria-expanded="false" aria-controls="collapseLegend"><span class="glyphicon glyphicon-list-alt" aria-hidden="true"></span><span class="panel-label">Legend</span></a> 
-          <a class="panel-close" role="button" data-toggle="collapse" tabindex="0" href="#panelLegend"><span class="esri-icon esri-icon-close" aria-hidden="true"></span></a> 
+          <a class="panel-toggle" role="button" data-toggle="collapse" href="#collapseLegend" aria-expanded="false"
+            aria-controls="collapseLegend"><span class="glyphicon glyphicon-list-alt" aria-hidden="true"></span><span
+              class="panel-label">Legend</span></a>
+          <a class="panel-close" role="button" data-toggle="collapse" tabindex="0" href="#panelLegend"><span class="esri-icon esri-icon-close"
+              aria-hidden="true"></span></a>
         </div>
       </div>
       <div id="collapseLegend" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingLegend">
-        <div class="panel-body">            
+        <div class="panel-body">
           <div id="legendDiv"></div>
         </div>
       </div>
       <div class="panel-body">
         <label id="opacity-label" for="opacity-slider">Opacity: 50%</label>
         <input id="opacity-slider" type="range" min="0" max="1" step="0.01" value=".5">
-    </div>
+      </div>
     </div>
 
     <!-- Panel - Parcel Information -->
     <div id="panelPopup" class="panel collapse">
       <div id="headingPopup" class="panel-heading" role="tab">
         <div class="panel-title">
-          <a class="panel-toggle" role="button" data-toggle="collapse" href="#collapsePopup"  aria-expanded="true" aria-controls="collapsePopup">
+          <a class="panel-toggle" role="button" data-toggle="collapse" href="#collapsePopup" aria-expanded="true"
+            aria-controls="collapsePopup">
             <span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span>
             <span class="panel-label">Parcel Information</span>
-          </a> 
+          </a>
           <a class="panel-close" role="button" data-toggle="collapse" tabindex="0" href="#panelPopup">
             <span class="esri-icon esri-icon-close" aria-hidden="true"></span>
-          </a>  
+          </a>
         </div>
       </div>
       <div id="collapsePopup" class="panel-collapse" role="tabpanel" aria-labelledby="headingPopup">
         <div class="panel-body">
-          <li class="dropdown-header" style="color: #FFFFFF"><font size="3">Select Owner</font></li>
+          <li class="dropdown-header" style="color: #FFFFFF">
+            <font size="3">Select Owner</font>
+          </li>
           <select id="selectAgencyPanel" class="form-control"></select>
-          <p><div id="numberinputdiv">
-            <nav class="leader-1">
+          <p>
+            <div id="numberinputdiv">
+              <nav class="leader-1">
                 <button title="Previous" type="button" class="btn btn-default" id="back">
-                    <span class="esri-icon-reverse" ></span>                      
+                  <span class="esri-icon-reverse"></span>
                 </button>
                 <input type="text" id="numinput" style="text-align:center;">
                 <button title="Next" type="button" class="btn btn-default" id="forward">
-                  <span class="esri-icon-forward"></span>                      
-                </button>             
-            </nav>
-          </div></p>
-          <p><div id="arraylengthdiv" style="text-align:center;"></div></p>
-          <p><div id="ownerdiv"></div></p>
-          <p><div id="parcelIDdiv"></div></p>
-          <p><div id="stateParceldiv"></div></p>
-          <p><div id="pliCodediv"></div></p>
-          <p><div id="sizediv"></div></p>
-          <p><div id="valuediv"></div></p>
-          <p><div id="trsdiv"></div></p>
-          <p><div id="legaldiv"></div></p>
+                  <span class="esri-icon-forward"></span>
+                </button>
+              </nav>
+            </div>
+          </p>
+          <p>
+            <div id="arraylengthdiv" style="text-align:center;"></div>
+          </p>
+          <p>
+            <div id="ownerdiv"></div>
+          </p>
+          <p>
+            <div id="parcelIDdiv"></div>
+          </p>
+          <p>
+            <div id="stateParceldiv"></div>
+          </p>
+          <p>
+            <div id="pliCodediv"></div>
+          </p>
+          <p>
+            <div id="sizediv"></div>
+          </p>
+          <p>
+            <div id="valuediv"></div>
+          </p>
+          <p>
+            <div id="trsdiv"></div>
+          </p>
+          <p>
+            <div id="legaldiv"></div>
+          </p>
         </div>
-     </div>
+      </div>
+    </div>
   </div>
-</div>
-<!-- /.calcite-panels -->
+  <!-- /.calcite-panels -->
 
   <script type="text/javascript">
     var dojoConfig = {
       packages: [{
-        name: "bootstrap",
-        location: "https://esri.github.io/calcite-maps/dist/vendor/dojo-bootstrap"
-      },
-      {
-        name: "calcite-maps",
-        location: "https://esri.github.io/calcite-maps/dist/js/dojo"
-      }]
+          name: "bootstrap",
+          location: "https://esri.github.io/calcite-maps/dist/vendor/dojo-bootstrap"
+        },
+        {
+          name: "calcite-maps",
+          location: "https://esri.github.io/calcite-maps/dist/js/dojo"
+        }
+      ]
     };
   </script>
 
@@ -219,4 +259,5 @@
   <script src="script.js"></script>
 
 </body>
+
 </html>

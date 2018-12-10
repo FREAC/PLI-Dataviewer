@@ -99,7 +99,7 @@
 
             var highlightSymbol = new SimpleLineSymbol(
                 SimpleLineSymbol.STYLE_SOLID,
-                new Color([96, 96, 96]), 5);
+                new Color([96, 96, 96]), 3);
 
             var highlightGraphic;
 
@@ -184,6 +184,7 @@
             });
 
             map.add(parcels);
+            map.reorder(parcels, 0)
 
             //extract the parcel id from the url
             function getParcelFromUrl(url) {
