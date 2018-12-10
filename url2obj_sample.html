@@ -53,7 +53,7 @@
             parser.parse();
 
             var popup = new Popup({
-                container: domConstruct.create("div")
+                container: domConstruct.create("div"),
             });
 
             var selectionLayer = new GraphicsLayer({
@@ -69,7 +69,15 @@
             var view = new MapView({
                 container: "viewDiv",
                 map: map,
-                popup: popup,
+                popup: {
+                    dockEnabled: true,
+                    dockOptions: {
+                        // Disables the dock button from the popup
+                        buttonEnabled: false,
+                        // Ignore the default sizes that trigger responsive docking
+                        breakpoint: false,
+                    }
+                },
             });
 
             var popupTemplate = {
@@ -103,7 +111,10 @@
                 popupTemplate: popupTemplate
             });
 
-            query(mapView).on('click', function (response) {
+            query(view).on('click', function (response) {
+                view.graphics.removeAll();
+                selectionLayer.graphics.removeAll();
+                console.log(response);
                 // TODO: 
                 //  - Remove highlighted features
                 //  - select next feature
@@ -118,6 +129,10 @@
                         if (typeof history.pushState !== "undefined") {
                             window.history.pushState(null, null, "?parcel_id=" + graphic.attributes
                                 .parcel_id);
+                            highlightGraphic = new Graphic(graphic.geometry,
+                                highlightSymbol);
+                            selectionLayer.graphics.add(highlightGraphic);
+
                         }
                     }
                 });
@@ -188,7 +203,8 @@
 
                         // add graphic to selectionLayer when parcel selected
                         selectionLayer.graphics.removeAll();
-                        highlightGraphic = new Graphic(selection.features[0].geometry, highlightSymbol);
+                        highlightGraphic = new Graphic(selection.features[0].geometry,
+                            highlightSymbol);
                         selectionLayer.graphics.add(highlightGraphic);
 
                         var center = selection.features[0].geometry.extent.center;
@@ -196,7 +212,7 @@
                             extHandler.remove();
                             //zoom to the center then display the popup
                             view.popup.open({
-                                location: center,
+                                //location: center,
                                 features: selection.features,
                                 updateLocationEnabled: true
                             });
