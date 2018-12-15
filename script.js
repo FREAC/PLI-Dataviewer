@@ -107,7 +107,7 @@ require([
             minValue: 2000,
             maxValue: 3000,
             label: "Volunteer Fire Department Lands",
-            symbol: createSymbol("#beaed4")
+            symbol: createSymbol("#e41a1c")
         }, {
             minValue: 3000,
             maxValue: 4000,
@@ -132,7 +132,7 @@ require([
             minValue: 7000,
             maxValue: 8999,
             label: "Special District Lands",
-            symbol: createSymbol("#bf5b17")
+            symbol: createSymbol("#fec44f")
         }]
     });
 
