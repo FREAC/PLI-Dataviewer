@@ -99,33 +99,33 @@ require([
             title: "Land Owner Index"
         },
         classBreakInfos: [{
-            minValue: 1000,
-            maxValue: 1999,
+            minValue: 0,
+            maxValue: 2000,
             label: "State Lands",
             symbol: createSymbol("#7fc97f")
         }, {
             minValue: 2000,
-            maxValue: 2999,
+            maxValue: 3000,
             label: "Volunteer Fire Department Lands",
             symbol: createSymbol("#beaed4")
         }, {
             minValue: 3000,
-            maxValue: 3999,
+            maxValue: 4000,
             label: "Federal Lands",
             symbol: createSymbol("#a65628")
         }, {
             minValue: 4000,
-            maxValue: 4999,
+            maxValue: 5000,
             label: "County Lands",
             symbol: createSymbol("#984ea3")
         }, {
             minValue: 5000,
-            maxValue: 5999,
+            maxValue: 6000,
             label: "Municipal Lands",
             symbol: createSymbol("#386cb0")
         }, {
             minValue: 6000,
-            maxValue: 6999,
+            maxValue: 7000,
             label: "Other or Non-Private Lands",
             symbol: createSymbol("#f0027f")
         }, {
@@ -172,8 +172,9 @@ require([
             top: 50,
             bottom: 0
         },
-        center: [-82.28, 27.8],
-        zoom: 7,
+        // center: [-82.28, 27.8],
+        center: [-81.65, 30.3240],
+        zoom: 16,
         ui: {
             components: []
         }
