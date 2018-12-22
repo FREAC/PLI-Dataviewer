@@ -172,8 +172,7 @@ require([
             top: 50,
             bottom: 0
         },
-        // center: [-82.28, 27.8],
-        center: [-81.65, 30.3240],
+        center: [-82.28, 27.8],
         zoom: 16,
         ui: {
             components: []
