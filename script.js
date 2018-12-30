@@ -173,7 +173,7 @@ require([
             bottom: 0
         },
         center: [-82.28, 27.8],
-        zoom: 16,
+        zoom: 7,
         ui: {
             components: []
         }
