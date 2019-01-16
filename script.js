@@ -231,7 +231,7 @@ require([
                 $('#valuediv').html('<b>Value:</b> $' + response.features[0].attributes.av_nsd.toLocaleString());
                 $('#sizediv').html('<b>Size:</b> ' + response.features[0].attributes.no_lnd_unt.toLocaleString() + ' Acres');
                 $('#trsdiv').html('<b>Township, Range, Section:</b> ' + response.features[0].attributes.twn + ' ' + response.features[0].attributes.rng + ' ' + response.features[0].attributes.sec);
-                $('#sharemap').html('<b>Share parcel:</b> <a target="_blank" href=' + 'http://hermes.freac.fsu.edu/pli-new/?parcel_id=' + response.features[0].attributes.parcel_id + '>http://hermes.freac.fsu.edu/pli-new/?parcel_id=' + response.features[0].attributes.parcel_id + '</a>');
+                $('#sharemap').html('<b>Share parcel:</b> <a target="_blank" href=' + 'http://hermes.freac.fsu.edu/pli-dataviewer/share?parcel_id=' + response.features[0].attributes.parcel_id + '>http://hermes.freac.fsu.edu/pli-dataviewer/share?parcel_id=' + response.features[0].attributes.parcel_id + '</a>');
                 $('#legaldiv').html('<b>Legal Description:</b> ' + response.features[0].attributes.s_legal);
                 $('#arraylengthdiv').html('Parcel ' + 1 + ' of ' + response.features.length);
                 $('#numinput').val(1);

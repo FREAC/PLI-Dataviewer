@@ -8,7 +8,7 @@
     <meta name="viewport" content="initial-scale=1, maximum-scale=1,user-scalable=no">
     <title>PLI Parcel Locator</title>
 
-    <link rel="stylesheet" href="https://js.arcgis.com/4.10/esri/css/main.css">
+    <link rel="stylesheet" href="https://js.arcgis.com/4.8/esri/css/main.css">
     <style>
         html,
         body,
@@ -27,7 +27,7 @@
             }
         };
     </script>
-    <script src="https://js.arcgis.com/4.10/"></script>
+    <script src="https://js.arcgis.com/4.8/"></script>
     <script>
         var map;
         var parcels;
@@ -120,40 +120,40 @@
                     title: "Land Owner Index"
                 },
                 classBreakInfos: [{
-                    minValue: 0,
-                    maxValue: 2000,
+                    minValue: 1000,
+                    maxValue: 1999,
                     label: "State Lands",
                     symbol: createSymbol("#7fc97f")
                 }, {
                     minValue: 2000,
-                    maxValue: 3000,
+                    maxValue: 2999,
                     label: "Volunteer Fire Department Lands",
-                    symbol: createSymbol("#e41a1c")
+                    symbol: createSymbol("#beaed4")
                 }, {
                     minValue: 3000,
-                    maxValue: 4000,
+                    maxValue: 3999,
                     label: "Federal Lands",
                     symbol: createSymbol("#a65628")
                 }, {
                     minValue: 4000,
-                    maxValue: 5000,
+                    maxValue: 4999,
                     label: "County Lands",
                     symbol: createSymbol("#984ea3")
                 }, {
                     minValue: 5000,
-                    maxValue: 6000,
+                    maxValue: 5999,
                     label: "Municipal Lands",
                     symbol: createSymbol("#386cb0")
                 }, {
                     minValue: 6000,
-                    maxValue: 7000,
+                    maxValue: 6999,
                     label: "Other or Non-Private Lands",
                     symbol: createSymbol("#f0027f")
                 }, {
                     minValue: 7000,
                     maxValue: 8999,
                     label: "Special District Lands",
-                    symbol: createSymbol("#fec44f")
+                    symbol: createSymbol("#bf5b17")
                 }]
             });
 
