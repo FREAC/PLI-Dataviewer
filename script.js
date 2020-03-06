@@ -54,7 +54,7 @@ require([
         content: "<p><b>Parcel ID:</b> {parcel_id}</p>" +
             "<p><b>State Parcel ID:</b> {state_par_}</p>" +
             "<p><b>PLI Code:</b> {pli_code}</p>" +
-            "<p><b>Size:</b> {no_lnd_unt:NumberFormat(places: 2)} Acres<p>" +
+            "<p><b>Size:</b> {custom_size:NumberFormat(places: 2)} Acres<p>" +
             "<p><b>Value:</b> ${av_nsd:NumberFormat(places: 2)}</p>" +
             "<p><b>TRS:</b> {twn} {rng} {sec}</p>" +
             "<p><b>Legal Description:</b> {s_legal}</p>",
@@ -65,7 +65,7 @@ require([
         content: "<p><b>Parcel ID:</b> {PARCEL_ID}</p>" +
             "<p><b>State Parcel ID:</b> {STATE_PAR_}</p>" +
             "<p><b>PLI Code:</b> {PLI_CODE}</p>" +
-            "<p><b>Size:</b> {NO_LND_UNT} Acres<p>" +
+            "<p><b>Size:</b> {custom_size} Acres<p>" +
             "<p><b>Value:</b> ${AV_NSD}</p>" +
             "<p><b>TRS:</b> {TWN} {RNG} {SEC}</p>" +
             "<p><b>Legal Description:</b> {S_LEGAL}</p>",
@@ -193,7 +193,7 @@ require([
         var params = new Query({
             geometry: geometry,
             returnGeometry: true,
-            outFields: ["own_name", "parcel_id", "state_par_", "pli_code", "no_lnd_unt", "av_nsd", "twn", "rng", "sec", "s_legal"]
+            outFields: ["own_name", "parcel_id", "state_par_", "pli_code", "custom_size", "av_nsd", "twn", "rng", "sec", "s_legal"]
         });
         return queryTask.execute(params);
     }
@@ -229,7 +229,7 @@ require([
                 $('#stateParceldiv').html('<b>State Parcel ID:</b> ' + response.features[0].attributes.state_par_);
                 $('#pliCodediv').html('<b>PLI Code:</b> ' + response.features[0].attributes.pli_code);
                 $('#valuediv').html('<b>Value:</b> $' + response.features[0].attributes.av_nsd.toLocaleString());
-                $('#sizediv').html('<b>Size:</b> ' + response.features[0].attributes.no_lnd_unt.toLocaleString() + ' Acres');
+                $('#sizediv').html('<b>Size:</b> ' + response.features[0].attributes.custom_size.toLocaleString() + ' Acres');
                 $('#trsdiv').html('<b>Township, Range, Section:</b> ' + response.features[0].attributes.twn + ' ' + response.features[0].attributes.rng + ' ' + response.features[0].attributes.sec);
                 $('#sharemap').html('<b>Share parcel:</b> <a target="_blank" href=' + 'http://hermes.freac.fsu.edu/pli-dataviewer/share?parcel_id=' + response.features[0].attributes.parcel_id + '>http://hermes.freac.fsu.edu/pli-dataviewer/share?parcel_id=' + response.features[0].attributes.parcel_id + '</a>');
                 $('#legaldiv').html('<b>Legal Description:</b> ' + response.features[0].attributes.s_legal);
@@ -284,7 +284,7 @@ require([
         });
 
         var params = new Query({
-            outFields: ["own_name", "parcel_id", "state_par_", "pli_code", "no_lnd_unt", "av_nsd", "twn", "rng", "sec", "s_legal"],
+            outFields: ["own_name", "parcel_id", "state_par_", "pli_code", "custom_size", "av_nsd", "twn", "rng", "sec", "s_legal"],
             where: "own_name = '" + feature + "'",
             returnGeometry: true
         });
@@ -314,7 +314,7 @@ require([
                 $('#stateParceldiv').html('<b>State Parcel ID:</b> ' + response.features[0].attributes.state_par_);
                 $('#pliCodediv').html('<b>PLI Code:</b> ' + response.features[0].attributes.pli_code);
                 $('#valuediv').html('<b>Value:</b> $' + response.features[0].attributes.av_nsd.toLocaleString());
-                $('#sizediv').html('<b>Size:</b> ' + parcelData[0].attributes.no_lnd_unt.toLocaleString() + ' Acres');
+                $('#sizediv').html('<b>Size:</b> ' + parcelData[0].attributes.custom_size.toLocaleString() + ' Acres');
                 $('#trsdiv').html('<b>Township, Range, Section:</b> ' + response.features[0].attributes.twn + ' ' + response.features[0].attributes.rng + ' ' + response.features[0].attributes.sec);
                 $('#sharemap').html('<b>Share parcel:</b> <a target="_blank" href=' + 'http://hermes.freac.fsu.edu/pli-new/?parcel_id=' + response.features[0].attributes.parcel_id + '>http://hermes.freac.fsu.edu/pli-new/?parcel_id=' + response.features[0].attributes.parcel_id + '</a>');
                 $('#legaldiv').html('<b>Legal Description:</b> ' + response.features[0].attributes.s_legal);
@@ -331,7 +331,7 @@ require([
         });
 
         var params = new Query({
-            outFields: ["own_name", "parcel_id", "state_par_", "pli_code", "no_lnd_unt", "av_nsd", "twn", "rng", "sec", "s_legal"],
+            outFields: ["own_name", "parcel_id", "state_par_", "pli_code", "custom_size", "av_nsd", "twn", "rng", "sec", "s_legal"],
             where: "own_name = '" + owner + "'",
             returnGeometry: true
         });
@@ -354,7 +354,7 @@ require([
                 $('#stateParceldiv').html('<b>State Parcel ID:</b> ' + parcelData[i].attributes.state_par_);
                 $('#pliCodediv').html('<b>PLI Code:</b> ' + parcelData[i].attributes.pli_code);
                 $('#valuediv').html('<b>Value:</b> $' + parcelData[i].attributes.av_nsd.toLocaleString());
-                $('#sizediv').html('<b>Size:</b> ' + parcelData[i].attributes.no_lnd_unt.toLocaleString() + ' Acres');
+                $('#sizediv').html('<b>Size:</b> ' + parcelData[i].attributes.custom_size.toLocaleString() + ' Acres');
                 $('#trsdiv').html('<b>Township, Range, Section:</b> ' + parcelData[i].attributes.twn + ' ' + parcelData[i].attributes.rng + ' ' + parcelData[i].attributes.sec);
                 $('#legaldiv').html('<b>Legal Description:</b> ' + parcelData[i].attributes.s_legal);
                 $('#sharemap').html('<b>Share parcel:</b> <a target="_blank" href=' + 'http://hermes.freac.fsu.edu/pli-new/?parcel_id=' + parcelData[i].attributes.parcel_id + '>http://hermes.freac.fsu.edu/pli-new/?parcel_id=' + parcelData[i].attributes.parcel_id + '</a>');
@@ -373,7 +373,7 @@ require([
             $('#stateParceldiv').html('<b>State Parcel ID:</b> ' + parcelData[e - 1].attributes.state_par_);
             $('#pliCodediv').html('<b>PLI Code:</b> ' + parcelData[e - 1].attributes.pli_code);
             $('#valuediv').html('<b>Value:</b> $' + parcelData[e - 1].attributes.av_nsd.toLocaleString());
-            $('#sizediv').html('<b>Size:</b> ' + parcelData[e - 1].attributes.no_lnd_unt.toLocaleString() + ' Acres');
+            $('#sizediv').html('<b>Size:</b> ' + parcelData[e - 1].attributes.custom_size.toLocaleString() + ' Acres');
             $('#trsdiv').html('<b>Township, Range, Section:</b> ' + parcelData[e - 1].attributes.twn + ' ' + parcelData[e - 1].attributes.rng + ' ' + parcelData[e - 1].attributes.sec);
             $('#sharemap').html('<b>Share parcel:</b> <a target="_blank" href=' + 'http://hermes.freac.fsu.edu/pli-new/?parcel_id=' + parcelData[e - 1].attributes.parcel_id + '>http://hermes.freac.fsu.edu/pli-new/?parcel_id=' + parcelData[e - 1].attributes.parcel_id + '</a>');
             $('#legaldiv').html('<b>Legal Description:</b> ' + parcelData[e - 1].attributes.s_legal);
@@ -398,7 +398,7 @@ require([
             suggestionTemplate: "PID: {parcel_id}, State PID: {state_par_}, City: {own_city}, Parcel Name: {own_name}",
             displayField: "PLI_CODE",
             exactMatch: false,
-            outFields: ["pli_code", "parcel_id", "own_name", "own_state", "state_par_", "no_lnd_unt", "av_nsd", "twn", "sec", "s_legal", "rng"],
+            outFields: ["pli_code", "parcel_id", "own_name", "own_state", "state_par_", "custom_size", "av_nsd", "twn", "sec", "s_legal", "rng"],
             name: "Florida Public Land Inventories Parcels",
             placeholder: "Search by Parcel ID, City, or County",
             resultGraphicEnabled: true,
